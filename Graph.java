@@ -1,15 +1,17 @@
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 class Graph<T>{
   private final static int DEFAULT_WEIGHT = 1;
+  private final static int POSITIVE_INFINITY = Integer.MAX_VALUE;
   private boolean directed;
   private boolean weighted;
   private List<Vertex<T>> vertices;
@@ -89,7 +91,8 @@ class Graph<T>{
     vertices.forEach(v -> v.setColor('W'));
     Vertex<T> root = vertices.get(rootId);
     root.setColor('G');
-    Queue<Vertex<T>> queue = new LinkedList<>(Arrays.asList(root));
+    Queue<Vertex<T>> queue = new LinkedList<>();
+    queue.add(root);
     while(!queue.isEmpty()){
       Vertex<T> u = queue.poll();
       for(Vertex<T> v : vertices)
@@ -104,11 +107,26 @@ class Graph<T>{
   }
 
   private Character[] mountColorsArray(){
-    int i = 0;
-    Character[] colors = new Character[vertices.size()];
-    for(Vertex<T> v : vertices)
-      colors[i++] = v.getColor();
-    return colors;
+    List<Character> colors = new ArrayList<>();
+    this.vertices.forEach(v -> colors.add(v.getColor()));
+    return colors.toArray(new Character[0]);
+  }
+
+  private List<List<Object>> mountDijkstraResults(){
+    List<Object> predecessors = new ArrayList<>();
+    List<Object> distances = new ArrayList<>();
+    this.vertices.forEach(v -> {
+      if(v.getPredecessor() != null)
+        predecessors.add(v.getPredecessor().getId());
+      else 
+        predecessors.add(v.getPredecessor());
+      distances.add(v.getDistance());
+    });
+
+    List<List<Object>> results = new ArrayList<>();
+    results.add(predecessors);
+    results.add(distances);
+    return results;
   }
 
   public void showAdj(){
@@ -132,6 +150,46 @@ class Graph<T>{
         visit(v, v.getPredecessor());
       }
     root.setColor('B');
+  }
+
+  public List<List<Object>> DijkstraShortestPath(int rootId){
+    Set<Vertex<T>> S = new HashSet<>();
+    Queue<Vertex<T>> Q = new LinkedList<>();
+    
+    this.vertices.forEach(v -> {
+      v.setPredecessor(null);
+      v.setDistance(POSITIVE_INFINITY);
+      Q.add(v);
+    });
+
+    this.vertices.get(rootId).setDistance(0);
+
+    while(!Q.isEmpty()){
+      Vertex<T> u = getMinimumDistance(Q);
+      S.add(u);
+      Q.remove(u);
+      for(Vertex<T> v : u.getNeighourhood()){
+        if(v.getDistance() > (u.getDistance() + u.edgeWeightTo(v))){
+          v.setDistance(u.getDistance() + u.edgeWeightTo(v));
+          v.setPredecessor(u);
+        }
+      }
+    }
+
+    return mountDijkstraResults(); 
+  }
+
+  private Vertex<T> getMinimumDistance(Queue<Vertex<T>> Q){
+    Vertex<T> minimum = Q.peek();
+    int leastDistance = minimum.getDistance();
+    
+    for(Vertex<T> v : Q)
+      if(v.getDistance() < leastDistance){
+        leastDistance = v.getDistance();
+        minimum = v;
+      }
+
+    return minimum;
   }
 
   private static Integer[][] turnInto2DArray(List<Integer> uniArray){

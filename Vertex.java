@@ -4,6 +4,7 @@ import java.util.ArrayList;
 class Vertex<T> {
   private final int id;
   private Vertex<T> predecessor;
+  private Integer distance; 
   private Character color;
   private List<Edge<T>> edges;
   private T data;
@@ -14,6 +15,7 @@ class Vertex<T> {
     this.data = data;
     this.id = id;
     this.predecessor = null;
+    this.distance = null;
   }
   
   void putEdge(Vertex<T> to, Integer weight){
@@ -29,6 +31,23 @@ class Vertex<T> {
 
   void removeRelatedEdges(){
     this.edges.removeIf(e -> e.getStart() == this || e.getEnd() == this);
+  }
+
+  int edgeWeightTo(Vertex<T> to){
+    for(Edge<T> e : this.edges)
+      if(e.getEnd() == to) 
+        return e.getWeight();
+    
+    return 1;
+  }
+
+  List<Vertex<T>> getNeighourhood(){
+    List<Vertex<T>> neighourhood = new ArrayList<>();
+    for(Edge<T> e : this.edges)
+      if(e.getEnd() != null) 
+        neighourhood.add(e.getEnd());
+    
+    return neighourhood;
   }
 
   boolean canHaveEdgeTo(Vertex<T> to){
@@ -65,6 +84,14 @@ class Vertex<T> {
 
   int getId(){
     return this.id;
+  }
+
+  void setDistance(Integer distance){
+    this.distance = distance;
+  }
+
+  Integer getDistance(){
+    return this.distance;
   }
 
   void setPredecessor(Vertex<T> predecessor){
