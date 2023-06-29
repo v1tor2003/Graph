@@ -1,7 +1,7 @@
 package graph;
 import java.util.Set;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 
 class Edge<T> {
@@ -22,7 +22,7 @@ class Edge<T> {
   }
 
   Set<Vertex<T>> connectedVertices(){
-    return new HashSet<>(Arrays.asList(this.source, this.target));
+    return new LinkedHashSet<>(Arrays.asList(this.source, this.target));
   }
 
   public Vertex<T> getSource() {

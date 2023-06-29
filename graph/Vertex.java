@@ -31,8 +31,6 @@ class Vertex<T>{
     return Objects.hash(data);
   }
 
-   // TODO
-  // getNeigborHood()
   public String toString(){
     return String.format("[data: %s]",this.data.toString());
   }

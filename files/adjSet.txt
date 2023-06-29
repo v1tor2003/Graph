@@ -1,0 +1,3 @@
+adj1.txt
+adj5.txt
+adj10.txt

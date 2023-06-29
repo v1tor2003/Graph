@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import files.FileManipulation;
 
-public class Graph<T>{
+public class Graph<T> {
   private boolean directed;
   private boolean weighted;
   private Set<Vertex<T>> vertices;
@@ -79,8 +79,8 @@ public class Graph<T>{
     });
     return neighborhood;
   }
+
   /* //TODO
-    getNeighborhood //
     BreathFirstSearch()//
     DeepFirstSearch()//
   */ 
@@ -104,6 +104,14 @@ public class Graph<T>{
     for(int i = 0; i < n; i++){
       this.addVertex((T) Integer.valueOf(i));
     }
+  }
+
+  public Set<Vertex<T>> getVertices() {
+    return vertices;
+  }
+
+  public Set<Edge<T>> getEdges() {
+    return edges;
   }
 
   private String graphSettings(){
